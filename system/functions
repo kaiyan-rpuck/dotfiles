@@ -1,0 +1,103 @@
+#!/bin/bash
+
+
+################
+# Utility functions
+################
+
+# Extract archives - use: extract <file>
+# Based on http://dotfiles.org/~pseup/.bashrc
+function extract() {
+	if [ -f "$1" ] ; then
+		local filename=$(basename "$1")
+		local foldername="${filename%%.*}"
+		local fullpath=`perl -e 'use Cwd "abs_path";print abs_path(shift)' "$1"`
+		local didfolderexist=false
+		if [ -d "$foldername" ]; then
+			didfolderexist=true
+			read -p "$foldername already exists, do you want to overwrite it? (y/n) " -n 1
+			echo
+			if [[ $REPLY =~ ^[Nn]$ ]]; then
+				return
+			fi
+		fi
+		mkdir -p "$foldername" && cd "$foldername"
+		case $1 in
+			*.tar.bz2) tar xjf "$fullpath" ;;
+			*.tar.gz) tar xzf "$fullpath" ;;
+			*.tar.xz) tar Jxvf "$fullpath" ;;
+			*.tar.Z) tar xzf "$fullpath" ;;
+			*.tar) tar xf "$fullpath" ;;
+			*.taz) tar xzf "$fullpath" ;;
+			*.tb2) tar xjf "$fullpath" ;;
+			*.tbz) tar xjf "$fullpath" ;;
+			*.tbz2) tar xjf "$fullpath" ;;
+			*.tgz) tar xzf "$fullpath" ;;
+			*.txz) tar Jxvf "$fullpath" ;;
+			*.zip) unzip "$fullpath" ;;
+			*) echo "'$1' cannot be extracted via extract()" && cd .. && ! $didfolderexist && rm -r "$foldername" ;;
+		esac
+	else
+		echo "'$1' is not a valid file"
+	fi
+}
+
+# check if a string is a valid ip address
+function valid_ip () {
+  if [$# -eq 0 ]; then
+    echo "Usage: valid_ip IP_ADDRESS"
+    return 3  # incorrect usage
+  else
+    ip=${1:-1.2.3.4}
+    if expr "$ip" : '[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*$' > /dev/null; then
+      for i in 1 2 3 4; do
+        if [ $(echo "$ip" | cut -d. -f$i) -gt 255 ]; then
+          return 2  # invalid squad number
+        fi
+      done
+      return 0  # valid ip
+    else
+      return 1  # invalid ip format
+    fi
+  fi
+}
+
+################
+# Functions for remote connections
+################
+
+# ssh connection to rpuck robot
+function ros2rpuck () {
+  if [ $# -eq 0 ]; then
+    echo "Usage: ros2rpuck MASTER_HOSTNAME|MASTER_IP"
+    return 1  # incorrect usage
+  fi
+  if valid_ip $1; then
+    export ROS_MASTER_URI=http://$1:11311
+    echo "ROS master has been set to ip address $1"
+  else
+    export ROS_MASTER_URI=http://$1.local:11311
+    echo "ROS master has been set to $1.local"
+  fi
+  export ROS_HOSTNAME=$HOSTNAME.local
+  echo "$HOSTNAME is the local hostname for ROS communications"
+  return 0  # successful setup
+}
+
+function ssh2rpuck () {
+  if [ $# -eq 0 ]; then
+    echo "Usage: ssh2rpuck REMOTE_HOSTNAME|REMOTE_IP [username=nvidia]"
+    return 1  # incorrect usage
+  else
+    if valid_ip $1; then
+      target=$1
+    else
+      target=$1.local
+    fi
+    if [ -n $2 ]; then
+      ssh $2@$target
+    else
+      ssh nvidia@$target
+    fi
+  fi
+}

@@ -1,0 +1,25 @@
+#!/bin/bash
+
+################
+# Setting for easier shell usage
+################
+# Easier navigation: .., ..., ~ and -
+alias ..="cd .."
+alias cd..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+alias ~="cd ~" # `cd` is probably faster to type though
+alias -- -="cd -"
+
+################
+# Alias for remote setting to rpuck02
+################
+# rpuck02 is currently on the Turtlebot 2 platform
+# this alias requires rpuck02 are registered hostnames on the network
+
+# ssh connection to TX2 rpuck02
+alias ssh2rp2="ssh2rpuck rpuck02"
+
+# set the local system listen to remote ROS master node on rpuck02
+alias ros2rp2="ros2rpuck rpuck02"

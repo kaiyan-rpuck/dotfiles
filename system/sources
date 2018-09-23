@@ -1,0 +1,12 @@
+#!/bin/bash
+
+################
+# source customisation files into shell
+################
+
+# to set up the ROS bash path
+source /opt/ros/kinetic/setup.bash
+
+# to set up the local catkin workspace path
+source ~/catkin_ws/devel/setup.bash
+

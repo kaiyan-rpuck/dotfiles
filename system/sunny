@@ -1,0 +1,51 @@
+#!/bin/bash
+
+################
+# test 1 points relevant
+################
+
+# the 6 points along the 10 meters path
+t1_ps[0]="{x: -0.866484, y: 3.74181, z: 0.0}"
+t1_ps[1]="{x: -2.84024, y: 3.68563, z: 0.0}"
+t1_ps[2]="{x: -4.81399, y: 3.62945, z: 0.0}"
+t1_ps[3]="{x: -6.872945, y: 3.565475, z: 0.0}"
+t1_ps[4]="{x: -8.8318, y: 3.5015, z: 0.0}"
+t1_ps[5]="{x: -10.8405, y: 3.45329, z: 0.0}"
+
+# the 2 orientations of the 10 meters path
+t1_os[0]="{z: 0.9998875, w: 0.0149995}"
+t1_os[1]="{w: 0.9998875, z: 0.0149995}"
+
+# to generate the movement commands
+for i in ${!t1_ps[@]}; do
+  for j in ${!t1_os[@]}; do
+    alias sunnysl$((j+1))$((i+1))="rostopic pub -1 /move_base_simple/goal geometry_msgs/PoseStamped '{header: {stamp: now, frame_id: \"map\"}, pose: {position: ${tl_ps[i]}, orientation: ${tl_os[j]}}}'"
+  done
+done
+unset i
+unset j
+
+################
+# test 2 points
+################
+
+# the 8 points along the complex path
+t2_pts[0]="{position: {x: -0.565, y: 0.477, z: 0.0}, orientation: {z: 0.634, w: 0.773}}"
+t2_pts[1]="{position: {x: -1.411, y: 3.122, z: 0.0}, orientation: {z: 1.000, w: 0.023}}"
+t2_pts[2]="{position: {x: -2.301, y: 3.632, z: 0.0}, orientation: {z: 0.763, w: 0.647}}"
+t2_pts[3]="{position: {x: -2.412, y: 5.544, z: 0.0}, orientation: {z: 0.998, w: 0.067}}"
+t2_pts[4]="{position: {x: -9.829, y: 5.645, z: 0.0}, orientation: {z: -0.741, w: 0.671}}"
+t2_pts[5]="{position: {x: -9.658, y: 3.866, z: 0.0}, orientation: {z: -0.137, w: 0.991}}"
+t2_pts[6]="{position: {x: -4.997, y: 3.466, z: 0.0}, orientation: {z: -0.682, w: 0.731}}"
+t2_pts[7]="{position: {x: -5.080, y: 0.580, z: 0.0}, orientation: {z: -0.113, w: 0.994}}"
+
+# to generate the movement commadns
+for i in ${!t2_pts[@]}; do
+  alias sunnycp$((i+1))="rostopic pub -1 /move_base_simple/goal geometry_msgs/PoseStamped '{header: {stamp: now, frame_id: \"map\"}, pose: ${t2_pts[i]}}'"
+done
+unset i
+
+################
+# path cleaning command
+################
+alias sunnyclearpath="rostopic pub -1 /syscommand std_msgs/String 'reset'"
