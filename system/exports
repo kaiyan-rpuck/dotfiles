@@ -10,3 +10,11 @@ export EDITOR="vim"
 ###### export virtualenvwrapper's WORKON_HOME
 export WORKON_HOME=~/Workspace/PyEnvs
 
+
+###### disable 'pip' command
+export PIP_REQUIRE_VIRTUALENV=true
+
+
+###### export the Cuda and Nsight path to PATH env
+export PATH=/usr/local/cuda/bin:/usr/local/cuda/NsightCompute-2019.3${PATH:+:${PATH}}
+

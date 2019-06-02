@@ -1,5 +1,6 @@
 # untrack the backup
 backup
+installers
 
 # untrack the system/extra, as its encrypted zip file will be tracked
 system/extra

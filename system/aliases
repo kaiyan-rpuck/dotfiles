@@ -23,3 +23,7 @@ alias ssh2rp2="ssh2rpuck rpuck02"
 
 # set the local system listen to remote ROS master node on rpuck02
 alias ros2rp2="ros2rpuck rpuck02"
+
+###### setup gpip for global 'pip' command
+alias gpip="PIP_REQUIRE_VIRTUALENV=\"\" pip"
+

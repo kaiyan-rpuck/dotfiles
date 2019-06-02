@@ -1,5 +1,11 @@
 # This doc includes the necessary manual installations on a new Ubuntu 16.04 system
 
+## TODO-List
+1. ~install nvidia driver and Cuda~
+2. install ROS, setting it compatible with Python 2.7 and OpenCV3
+3. install OpenCV3 and its contrib modules, setting it compatible with OpenCV2 and enable GPU acceleration
+4. install Caffe or TensorFlow
+
 ### Sogou Pinyin
 The Sogou Pinyin is currently the only good Chinese input on a Ubuntu system, since the Google Pinyin discontinued by March 2019.
 
@@ -14,9 +20,8 @@ The Sogou Pinyin is currently the only good Chinese input on a Ubuntu system, si
 ### Issue: shutdown/reboot hangs
 - Tried to add `acpi=force` into `GRUB_CMDLINE_LINUX_DEFAULT` in the file */etc/default/grub*
 
-### Potential TODO: set up Python virtual environment and ban the normal python package installation
-
-### Potential TODO: install nvidia driver, enable cuda and prepare for OpenCV GPU acceleration
+### Set up Python virtual environment and ban the normal python package installation
+- This has been done by `export PIP_REQUIRE_VIRTUALENV=true` and `alias gpip="PIP_REQUIRE_VIRTUALENV=\"\" pip"`
 
 ### Unity Launcher knowledge
 - Two places for the .desktop files:
