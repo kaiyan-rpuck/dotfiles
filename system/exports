@@ -5,5 +5,8 @@ export EDITOR="vim"
 
 # setup Eigen3 path
 # need to check if Eigen3 is installed
-export Eigen3_INCLUDE_DIRS=/usr/local/include/eigen3
+# export Eigen3_INCLUDE_DIRS=/usr/local/include/eigen3
+
+###### export virtualenvwrapper's WORKON_HOME
+export WORKON_HOME=~/Workspace/PyEnvs
 
