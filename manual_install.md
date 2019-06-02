@@ -2,16 +2,25 @@
 
 ## TODO-List
 1. ~install nvidia driver and Cuda~
-2. install ROS, setting it compatible with Python 2.7 and OpenCV3
-3. install OpenCV3 and its contrib modules, setting it compatible with OpenCV2 and enable GPU acceleration
+2. ~install ROS, the desktop-full version automatically installs *ros-kinetic-opencv3* and the *OpenCV 3.3.1* is usable via `import cv2`~
+  1. according to *ros-kinetic-opencv3* wiki, the *opencv_contrib* is also included in this package.
+  2. there will be CMake considerations if both OpenCV2 and OpenCV3 are installed. But we keep only using OpenCV3 as OpenCV2 will be outdated.
+  3. with this opencv3 installation, the CUDA support is off and the OpenCL support is on with no extra feature
+  4. the actual build information of the Opencv can be found by `print cv2.getBuildInformation()` in Python
+  4. OpenCL is not installed on Ubuntu 16.04 by default
+  5. this is a good article about [building OpenCV with CUDA on Tegra environment](https://docs.opencv.org/3.4/d6/d15/tutorial_building_tegra_cuda.html)
+  6. the *ros-kinetic-opencv3* is built for ROS and Python 2, so in Python 3 `import cv2` will fail
+  7. this is a good article about [compiling OpenCV with CUDA support](https://www.pyimagesearch.com/2016/07/11/compiling-opencv-with-cuda-support/)
+3. install Anaconda and set it compatible with ROS
+  1. this is a good article about [solving conflicting Pythons](https://dev.to/bgalvao/conda--dealing-with-conflicting-pythons-in-your-system-62n)
 4. install Caffe or TensorFlow
 5. backup the desktop shorcuts
-6. PyCharm configuration for ROS compatibility by following http://wiki.ros.org/IDEs
+6. PyCharm configuration for ROS compatibility by following [link](http://wiki.ros.org/IDEs)
 
 ### Sogou Pinyin
 The Sogou Pinyin is currently the only good Chinese input on a Ubuntu system, since the Google Pinyin discontinued by March 2019.
 
-1. Download the install package via the following link: https://pinyin.sogou.com/linux/?r=pinyin
+1. Download the install package via the following [link](https://pinyin.sogou.com/linux/?r=pinyin)
 
 2. Install the debian package via Software Center by double clicking
 

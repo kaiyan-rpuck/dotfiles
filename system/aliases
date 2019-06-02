@@ -12,6 +12,9 @@ alias .....="cd ../../../.."
 alias ~="cd ~" # `cd` is probably faster to type though
 alias -- -="cd -"
 
+# search within installed debian packages
+alias lspack="dpkg -l | grep ^ii | awk '{print \$2}' | grep"
+
 ################
 # Alias for remote setting to rpuck02
 ################

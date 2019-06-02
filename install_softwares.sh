@@ -252,3 +252,19 @@ function install_ROS_Kinetic {
     apt -y install python-rosinstall python-rosinstall-generator python-wstool build-essential
 }
 dpkg_attempt_install ros-kinetic install_ROS_Kinetic
+
+### install CuDNN for Deep Learning Frameworks
+function install_CuDNN {
+    ## to download the runtime, developer and samples debian packages from https://developer.nvidia.com/rdp/cudnn-download
+    _cudnn_deb=$(ls $_tmp_download_folder/libcudnn[0-9]_*.deb | tail -1)
+    _cudnn_dev_deb=$(ls $_tmp_download_folder/libcudnn[0-9]-dev_*.deb | tail -1)
+    _cudnn_doc_deb=$(ls $_tmp_download_folder/libcudnn[0-9]-doc_*.deb | tail -1)
+    if [[ -f $_cudnn_deb ]] && [[ -f $_cudnn_dev_deb ]] && [[ -f $_cudnn_doc_deb ]]; then
+        dpkg -i $_cudnn_deb
+        dpkg -i $_cudnn_dev_deb
+        dpkg -i $_cudnn_doc_deb
+    else
+        false
+    fi
+}
+dpkg_attempt_install cudnn install_CuDNN
