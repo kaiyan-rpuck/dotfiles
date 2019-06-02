@@ -222,5 +222,33 @@ function install_cuda {
             echo "" >> ${_dotfiles_dir}exports
         fi
     fi
+	unset _dotfiles_dir
+	true
 }
 dpkg_attempt_install cuda install_cuda
+
+### install ROS Kinetic
+function install_ROS_Kinetic {
+    # manually check the permissions to "restricted", "universe" and "multiverse" repositories via "System Settings -> Software & Updates"
+    # to add the source repository and the ropository key to the system config
+    sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+    apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
+    # to update and install ROS Kinetic
+    apt update
+    apt -y install ros-kinetic-desktop-full || return 1
+    # to initialise the rosdep
+    rosdep init
+    rosdep update
+    # to setup ROS environment variables
+    _dotfiles_dir=`dirname $0`/system/
+    if [[ `grep "source /opt/ros/kinetic/setup.bash" ${_dotfiles_dir}sources | wc -l` -eq 0 ]]; then
+		echo "" >> ${_dotfiles_dir}sources
+		echo "###### export ROS Kinetic environment variables" >> ${_dotfiles_dir}sources
+		echo "source /opt/ros/kinetic/setup.bash" >> ${_dotfiles_dir}sources
+		echo "" >> ${_dotfiles_dir}sources
+	fi
+    unset _dotfiles_dir
+    # to install tools and dependencies for building ROS packages
+    apt -y install python-rosinstall python-rosinstall-generator python-wstool build-essential
+}
+dpkg_attempt_install ros-kinetic install_ROS_Kinetic

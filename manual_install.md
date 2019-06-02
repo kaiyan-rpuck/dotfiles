@@ -5,6 +5,8 @@
 2. install ROS, setting it compatible with Python 2.7 and OpenCV3
 3. install OpenCV3 and its contrib modules, setting it compatible with OpenCV2 and enable GPU acceleration
 4. install Caffe or TensorFlow
+5. backup the desktop shorcuts
+6. PyCharm configuration for ROS compatibility by following http://wiki.ros.org/IDEs
 
 ### Sogou Pinyin
 The Sogou Pinyin is currently the only good Chinese input on a Ubuntu system, since the Google Pinyin discontinued by March 2019.
