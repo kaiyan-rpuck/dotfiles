@@ -351,19 +351,9 @@ function install_OpenCV3_for_Py2_and_Py3 {
     unset OPENCV_TEST_DATA_PATH
     # go back to the normal working directory
     cd $_cwd
-    # to correctly set up library path for both python2 and python3
-    _dotfiles_dir=$(realpath $(dirname $0))/system/
-    if [[ `grep "export PYTHON2PATH=/usr/local/lib/python2.7/dist-packages" ${_dotfiles_dir}exports | wc -l` -eq 0 ]]; then
-		echo "" >> ${_dotfiles_dir}exports
-		echo "###### export OpenCV3 library path for python2" >> ${_dotfiles_dir}exports
-		echo 'export PYTHON2PATH=/usr/local/lib/python2.7/dist-packages:$PYTHON2PATH' >> ${_dotfiles_dir}exports
-		echo "" >> ${_dotfiles_dir}exports
-	fi
-    if [[ `grep "export PYTHON3PATH=/usr/local/lib/python3.5/dist-packages" ${_dotfiles_dir}exports | wc -l` -eq 0 ]]; then
-		echo "" >> ${_dotfiles_dir}exports
-		echo "###### export OpenCV3 library path for python3" >> ${_dotfiles_dir}exports
-		echo 'export PYTHON3PATH=/usr/local/lib/python3.5/dist-packages:$PYTHON3PATH' >> ${_dotfiles_dir}exports
-		echo "" >> ${_dotfiles_dir}exports
+    # to change the name of the cv2.so installed by ros-kinetic-opencv3 so that both Python2&3 can use the newly built OpenCV3
+	if [[ -f /opt/ros/kinetic/lib/python2.7/dist-packages/cv2.so ]]; then
+		mv /opt/ros/kinetic/lib/python2.7/dist-packages/cv2.so /opt/ros/kinetic/lib/python2.7/dist-packages/cv2.so.backup
 	fi
     true
 }

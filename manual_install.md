@@ -1,11 +1,8 @@
 # This doc includes the necessary manual installations on a new Ubuntu 16.04 system
 
 ## TODO-List
-3. install Anaconda and set it compatible with ROS
-  1. this is a good article about [solving conflicting Pythons](https://dev.to/bgalvao/conda--dealing-with-conflicting-pythons-in-your-system-62n)
-4. install Caffe or TensorFlow
-5. backup the desktop shorcuts
-6. PyCharm configuration for ROS compatibility by following [link](http://wiki.ros.org/IDEs)
+- backup the desktop shorcuts
+- install Caffe or TensorFlow
 
 ------
 ### Sogou Pinyin
@@ -45,6 +42,7 @@ The Sogou Pinyin is currently the only good Chinese input on a Ubuntu system, si
 - More details can be found at [the Ubuntu help page](https://help.ubuntu.com/community/UnityLaunchersAndDesktopFiles)
 - It is possible to add shortcut to the right-click menu of the icon
 - It's better to manually add the icons to the launcher or copy a target list to the **favorites** value via gsettings
+- The .desktop files for the applications installed by Snap can be located in */var/lib/snapd/desktop/applications*
 
 ------
 ### Example of Chrome Shortcut to understand Unity Launcher and .desktop files
@@ -150,6 +148,8 @@ List of application candidates：
   - a good example is OpenCV
 - We can define two env $PYTHON2PATH and $PYTHON3PATH specifically for the the version sensitive libraries
 - We then define aliases for `python` and `python3` to include these specific library paths
+- This is a good article about [solving conflicting Pythons](https://dev.to/bgalvao/conda--dealing-with-conflicting-pythons-in-your-system-62n), especially if Anaconda/Miniconda need to be installed in the future
+  - however, Anaconda's PATH is conflicting with ROS PATH, so this is not recommended
 
 ------
 ### Useful Bash commands
@@ -159,3 +159,9 @@ List of application candidates：
   - e.g. `whereis nvcc`
 - `which` to locate a program file in the user's path
   - e.g. `which nvcc`
+
+------
+### Configuring PyCharm for ROS project
+- The following [link](http://wiki.ros.org/IDEs) gives guidance on how to set PyCharm compatible with ROS development
+- Adding `bash -i -c` to the start of the Snap PyCharm .desktop file
+- Setting up a virtualenv inside PyCharm specifically for ROS project

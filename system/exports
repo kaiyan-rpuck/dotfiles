@@ -22,11 +22,3 @@ export PIP_REQUIRE_VIRTUALENV=true
 ###### export the Cuda and Nsight path to PATH env
 export PATH=/usr/local/cuda/bin:/usr/local/cuda/NsightCompute-2019.3${PATH:+:${PATH}}
 
-
-###### export OpenCV3 library path for python2
-export PYTHON2PATH=/usr/local/lib/python2.7/dist-packages:$PYTHON2PATH
-
-
-###### export OpenCV3 library path for python3
-export PYTHON3PATH=/usr/local/lib/python3.5/dist-packages:$PYTHON3PATH
-

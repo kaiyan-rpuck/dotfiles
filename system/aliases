@@ -15,9 +15,6 @@ alias -- -="cd -"
 # search within installed debian packages
 alias lspack="dpkg -l | grep ^ii | awk '{print \$2}' | grep"
 
-# set up aliases for python and python3 in order to add specific library paths
-alias python="PYTHONPATH=${PYTHON2PATH:+$PYTHON2PATH:}$PYTHONPATH python"
-alias python3="PYTHONPATH=${PYTHON3PATH:+$PYTHON3PATH:}$PYTHONPATH python3"
 
 ################
 # Alias for remote setting to rpuck02
