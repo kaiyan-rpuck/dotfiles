@@ -23,7 +23,12 @@ function dpkg_installed {
 }
 
 function dpkg_attempt_install {
-	if ! dpkg_installed $1; then
+	if [[ $# -gt 2 ]]; then
+		_check_installed=$3
+	else
+		_check_installed="dpkg_installed $1"
+	fi
+	if ! $_check_installed; then
 		if [[ $# -gt 1 ]]; then
 			$2  # custom installation function as parameter
 		else
@@ -71,6 +76,9 @@ function print_boolean_result {
 
 ### install vim
 dpkg_attempt_install vim
+
+### install cmake-gui
+dpkg_attempt_install cmake-qt-gui
 
 ### set up the download folder for the installation files
 export _tmp_download_folder="$(dirname $0 | xargs realpath)/installers"
@@ -268,3 +276,104 @@ function install_CuDNN {
     fi
 }
 dpkg_attempt_install cudnn install_CuDNN
+
+### install OpenCV 3.4.6 for both Python 2 and Python 3, also enabling CUDA, DNN and CPU Optimisation
+function install_OpenCV3_for_Py2_and_Py3 {
+    # to install the required compiler
+    apt -y install build-essential
+    # to install the required packages
+    apt -y install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
+    # to install the optional packages
+    apt -y install python-dev python3-dev python-numpy python3-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
+    # to install other optional image/video packages
+    apt -y install libjpeg8-dev libtiff5-dev libjasper-dev libpng12-dev
+    apt -y install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev
+    apt -y install libxvidcore-dev libx264-dev
+    # to install GTK for GUI features
+    apt -y install libgtk-3-dev
+    # to install optional packages for optimisations like matrix operations
+    apt -y install libatlas-base-dev gfortran
+    # to clone the opencv and opencv_contrib repositories
+    git clone --branch 3.4.6 https://github.com/opencv/opencv.git $_tmp_download_folder/opencv
+    git clone --branch 3.4.6 https://github.com/opencv/opencv_contrib.git $_tmp_download_folder/opencv_contrib
+    # to set up the build
+    _cwd=$(pwd)
+    cd $_tmp_download_folder/opencv
+    rm -rf build
+    mkdir build
+    cd build
+    cmake -D CMAKE_BUILD_TYPE=RELEASE \
+            -D CMAKE_INSTALL_PREFIX=/usr/local \
+            -D INSTALL_C_EXAMPLES=ON \
+            -D INSTALL_PYTHON_EXAMPLES=ON \
+            -D OPENCV_EXTRA_MODULES_PATH=$_tmp_download_folder/opencv_contrib/modules \
+            -D BUILD_EXAMPLES=ON \
+            -D BUILD_opencv_python2=ON \
+            -D BUILD_opencv_python3=ON \
+            -D BUILD_opencv_dnn=ON \
+            -D WITH_V4L=ON \
+            -D WITH_LIBV4L=ON \
+            -D WITH_FFMPEG=ON \
+            -D WITH_TIFF=ON \
+            -D WITH_CUDA=ON \
+            -D CUDA_GENERATION=Pascal \
+            -D ENABLE_FAST_MATH=ON \
+            -D CUDA_FAST_MATH=ON \
+            -D WITH_CUBLAS=ON \
+            -D WITH_LAPACK=OFF \
+            -D ENABLE_AVX=ON \
+            -D ENABLE_AVX2=ON \
+            -D ENABLE_POPCNT=ON \
+            -D ENABLE_SSE41=ON \
+            -D ENABLE_SSE42=ON \
+            -D ENABLE_SSSE3=ON \
+            -D PYTHON2_EXECUTABLE=/usr/bin/python \
+            -D PYTHON2_INCLUDE_DIR=/usr/include/python2.7 \
+            -D PYTHON2_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython2.7.so \
+            -D PYTHON2_NUMPY_INCLUDE_DIRS=/usr/lib/python2.7/dist-packages/numpy/core/include \
+            -D PYTHON3_EXECUTABLE=/usr/bin/python3 \
+            -D PYTHON3_INCLUDE_DIR=/usr/include/python3.5 \
+            -D PYTHON3_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.5m.so \
+            -D PYTHON3_NUMPY_INCLUDE_DIRS=/usr/lib/python3/dist-packages/numpy/core/include \
+            ..
+    # to make the build
+    make -j6
+    # to build the documents
+    cd doc
+    make -j6 doxygen
+    cd ..
+    # to actually install
+    make install
+    # to download and run tests
+    git clone --branch 3.4.6 https://github.com/opencv/opencv_extra.git $_tmp_download_folder/opencv_extra
+    set OPENCV_TEST_DATA_PATH=$_tmp_download_folder/opencv_extra/testdata
+    ./bin/opencv_test_core
+    unset OPENCV_TEST_DATA_PATH
+    # go back to the normal working directory
+    cd $_cwd
+    # to correctly set up library path for both python2 and python3
+    _dotfiles_dir=$(realpath $(dirname $0))/system/
+    if [[ `grep "export PYTHON2PATH=/usr/local/lib/python2.7/dist-packages" ${_dotfiles_dir}exports | wc -l` -eq 0 ]]; then
+		echo "" >> ${_dotfiles_dir}exports
+		echo "###### export OpenCV3 library path for python2" >> ${_dotfiles_dir}exports
+		echo 'export PYTHON2PATH=/usr/local/lib/python2.7/dist-packages:$PYTHON2PATH' >> ${_dotfiles_dir}exports
+		echo "" >> ${_dotfiles_dir}exports
+	fi
+    if [[ `grep "export PYTHON3PATH=/usr/local/lib/python3.5/dist-packages" ${_dotfiles_dir}exports | wc -l` -eq 0 ]]; then
+		echo "" >> ${_dotfiles_dir}exports
+		echo "###### export OpenCV3 library path for python3" >> ${_dotfiles_dir}exports
+		echo 'export PYTHON3PATH=/usr/local/lib/python3.5/dist-packages:$PYTHON3PATH' >> ${_dotfiles_dir}exports
+		echo "" >> ${_dotfiles_dir}exports
+	fi
+    true
+}
+function check_OpenCV3_installed {
+    if [[ $(pkg-config --modversion opencv | grep "3.[4-9].[0-9]*" | wc -l) -gt 0 ]]; then
+        echo "  ${cyan}opencv $(pkg-config --modversion opencv) has ALREADY been installed.${reset}"
+        return
+    else
+        echo "  ${magenta}opencv3 has NOT been installed.${reset}"
+    fi
+    false
+}
+dpkg_attempt_install OpenCV3 install_OpenCV3_for_Py2_and_Py3 check_OpenCV3_installed
