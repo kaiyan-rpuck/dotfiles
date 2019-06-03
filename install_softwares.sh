@@ -367,3 +367,31 @@ function check_OpenCV3_installed {
     false
 }
 dpkg_attempt_install OpenCV3 install_OpenCV3_for_Py2_and_Py3 check_OpenCV3_installed
+
+### install Anaconda and resolve the conflict with system Python for ROS
+function install_Anaconda2 {
+    # to install the extended dependencies for Qt in order to use GUI packages
+    apt -y install libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6
+    # to check if the installer.sh exists
+    _anaconda_sh=$(ls $_tmp_download_folder/Anaconda2-[0-9.]*-Linux-x86_64.sh | tail -1)
+    if [[ -f $_anaconda_sh ]]; then
+        bash $_anaconda_sh
+    else
+        false
+    fi
+    # to soft link the 'conda', 'activate' and 'deactivate' into $HOME/.local/bin so that these commands are in system path without conflicting ROS
+    ln -s $HOME/anaconda2/bin/conda $HOME/.local/bin/conda
+    ln -s $HOME/anaconda2/bin/activate $HOME/.local/bin/activate
+    ln -s $HOME/anaconda2/bin/deactivate $HOME/.local/bin/deactivate
+    # ln -s $HOME/anaconda2/bin/anaconda-navigator $HOME/.local/bin/anaconda-navigator
+}
+function check_Anaconda2_installed {
+    if [[ -f $HOME/anaconda2/bin/conda ]]; then
+        echo "  ${cyan}Anaconda2 has ALREADY been installed.${reset}"
+        return
+    else
+        echo "  ${magenta}Anaconda2 has NOT been installed.${reset}"
+    fi
+    false
+}
+dpkg_attempt_install Anaconda2 install_Anaconda2 check_Anaconda2_installed
