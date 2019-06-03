@@ -272,7 +272,9 @@ function install_CuDNN {
         dpkg -i $_cudnn_dev_deb
         dpkg -i $_cudnn_doc_deb
     else
+        >&2 echo "${red}Please download the runtime, developer and samples CuDNN packages via official website${reset}"
         false
+        return
     fi
 }
 dpkg_attempt_install cudnn install_CuDNN
@@ -377,7 +379,9 @@ function install_Anaconda2 {
     if [[ -f $_anaconda_sh ]]; then
         bash $_anaconda_sh
     else
+        >&2 echo "${red}Please download the Anaconda2 installer bash file via official website${reset}"
         false
+        return
     fi
     # to soft link the 'conda', 'activate' and 'deactivate' into $HOME/.local/bin so that these commands are in system path without conflicting ROS
     ln -s $HOME/anaconda2/bin/conda $HOME/.local/bin/conda
@@ -395,3 +399,24 @@ function check_Anaconda2_installed {
     false
 }
 dpkg_attempt_install Anaconda2 install_Anaconda2 check_Anaconda2_installed
+
+### install TensorRT for optimising TensorFlow and PyCUDA as CUDA Python wrapper
+function install_TensorRT {
+    # to check the local repo pack
+    _tensorrt_deb=$(ls $_tmp_download_folder/nv-tensorrt-repo-*.deb | tail -1)
+    if [[ -f $_tensorrt_deb ]]; then
+        dpkg -i $_tensorrt_deb
+        # to add the repo key
+        apt-key add $(ls /var/nv-tensorrt-repo-*/*.pub | tail -1)
+        apt update
+        # to install tensorrt via its meta package
+        apt -y install tensorrt
+        # to install Python2, Python3 and TensorFlow supporting packages
+        apt -y install python-libnvinfer-dev python3-libnvinfer-dev uff-converter-tf
+    else
+        >&2 echo "${red}Please download the TensorRT debian package via official website${reset}"
+        false
+        return
+    fi
+}
+dpkg_attempt_install tensorrt install_TensorRT

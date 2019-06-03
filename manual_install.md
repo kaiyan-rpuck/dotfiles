@@ -165,3 +165,10 @@ List of application candidates：
 - The following [link](http://wiki.ros.org/IDEs) gives guidance on how to set PyCharm compatible with ROS development
 - Adding `bash -i -c` to the start of the Snap PyCharm .desktop file
 - Setting up a virtualenv inside PyCharm specifically for ROS project
+
+------
+### PyCUDA
+- PyCUDA is the Python wrapper for CUDA, which can be installed by `(g)pip install 'pycuda>=2017.1.1'`
+- It may be better to install it in a virtualenv when needed
+- Updating CUDA will break PyCUDA and will enforce to uninstall the old PyCUDA and then to install the new PyCUDA
+- This Python wrapper only work for Python2 (importing it fails in Python3)
