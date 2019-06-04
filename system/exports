@@ -3,7 +3,26 @@
 # set vim as default editor
 export EDITOR="vim"
 
+# set specific library paths for python2 and python3
+export PYTHON2PATH=""
+export PYTHON3PATH=""
+
 # setup Eigen3 path
 # need to check if Eigen3 is installed
-export Eigen3_INCLUDE_DIRS=/usr/local/include/eigen3
+# export Eigen3_INCLUDE_DIRS=/usr/local/include/eigen3
+
+###### export virtualenvwrapper's WORKON_HOME
+export WORKON_HOME=~/Workspace/PyEnvs
+
+
+###### disable 'pip' command
+export PIP_REQUIRE_VIRTUALENV=true
+
+
+###### export the Cuda and Nsight path to PATH env
+export PATH=/usr/local/cuda/bin:/usr/local/cuda/NsightCompute-2019.3${PATH:+:${PATH}}
+
+
+###### export the CUDA's CUPTI lib path for TensorFlow with GPU
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64
 

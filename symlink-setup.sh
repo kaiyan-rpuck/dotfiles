@@ -145,7 +145,10 @@ print_success() {
 # finds all .dotfiles in this folder
 # declare -a FILES_TO_SYMLINK=$(find . -type f -maxdepth 1 -name ".*" -not -name .DS_Store -not -name .git -not -name .osx | sed -e 's|//|/|' | sed -e 's|./.|.|')
 # FILES_TO_SYMLINK="$FILES_TO_SYMLINK .vim bin .config/fish" # add in vim and the binaries
-declare -a FILES_TO_SYMLINK=$(find `dirname $0`/system/ -type f )
+_real_dir=$(realpath `dirname $0`/system/)
+declare -a FILES_TO_SYMLINK=$(find $_real_dir -type f )
+unset _real_dir
+# declare -a FILES_TO_SYMLINK=$(find `dirname $0`/system/ -type f )
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -179,7 +182,7 @@ main() {
         fi
 
     done
-
+    return
 }
 
 main

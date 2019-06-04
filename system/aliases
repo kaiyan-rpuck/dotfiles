@@ -12,6 +12,10 @@ alias .....="cd ../../../.."
 alias ~="cd ~" # `cd` is probably faster to type though
 alias -- -="cd -"
 
+# search within installed debian packages
+alias lspack="dpkg -l | grep ^ii | awk '{print \$2}' | grep"
+
+
 ################
 # Alias for remote setting to rpuck02
 ################
@@ -23,3 +27,7 @@ alias ssh2rp2="ssh2rpuck rpuck02"
 
 # set the local system listen to remote ROS master node on rpuck02
 alias ros2rp2="ros2rpuck rpuck02"
+
+###### setup gpip for global 'pip' command
+alias gpip="PIP_REQUIRE_VIRTUALENV=\"\" pip"
+
