@@ -443,3 +443,34 @@ function tensorflow_set_ld_library_path {
     fi
 }
 tensorflow_set_ld_library_path
+
+### update cmake
+function update_cmake {
+    # to check if the source file exist
+    _cmake_tar_gz=$(ls $_tmp_download_folder/cmake-3.*.tar.gz | tail -1)
+    if [[ -f $_cmake_tar_gz ]]; then
+        # unzip the source codes
+        tar -xzvf $_cmake_tar_gz --directory $_tmp_download_folder
+        # to actually install CMake
+        _cwd=$(pwd)
+        cd $(ls -d $_tmp_download_folder/cmake-3.*/ | tail -1)
+        ./bootstrap
+        make -j4
+        make install
+        cd $_cwd
+    else
+        >&2 echo "${red}Please download the CMake source tar.gz via official website${reset}"
+        false
+        return
+    fi
+}
+function check_cmake_updated {
+    if [[ $(cmake --version | grep -o "3\.[0-9]*\.[0-9]*" | cut -d . -f 2) -gt 5 ]]; then
+        echo "  ${cyan}CMake has ALREADY been updated.${reset}"
+        return
+    else
+        echo "  ${magenta}CMake has NOT been updated.${reset}"
+    fi
+    false
+}
+dpkg_attempt_install CMake update_cmake check_cmake_updated

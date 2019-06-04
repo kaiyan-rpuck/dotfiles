@@ -12,6 +12,8 @@ alias .....="cd ../../../.."
 alias ~="cd ~" # `cd` is probably faster to type though
 alias -- -="cd -"
 
+alias ir="cd ~/Workspace/IR"
+
 # search within installed debian packages
 alias lspack="dpkg -l | grep ^ii | awk '{print \$2}' | grep"
 
