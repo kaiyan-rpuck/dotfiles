@@ -206,12 +206,12 @@ function install_cuda {
     # to install the kernel headers and development package
     echo "  ${cyan}Ready to install the kernel headers and development package${reset}"
     apt -y install linux-headers-$(uname -r) || return 1
-    if [[ `ls $_tmp_download_folder/cuda-repo-ubuntu1604_*.deb | wc -l` -eq 0 ]]; then
+    if [[ `ls $_tmp_download_folder/cuda-repo-ubuntu1604_$1*.deb | wc -l` -eq 0 ]]; then
         >&2 echo "${red}Please download the network version cuda repo debian package via official website${reset}"
         false
         return
     else
-        _cuda_deb=$(ls $_tmp_download_folder/cuda-repo-ubuntu1604_*.deb | tail -1)
+        _cuda_deb=$(ls $_tmp_download_folder/cuda-repo-ubuntu1604_$1*.deb | tail -1)
         # to manually check the MD5 sum
         echo "  ${cyan}The MD5 sum of the Cuda repo debian package is: $(md5sum $_cuda_deb)${reset}"
         echo "  ${cyan}Ready to install the Cuda repo deb package${reset}"
@@ -219,7 +219,7 @@ function install_cuda {
         apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
         apt update
         echo "  ${cyan}Ready to install the Cuda toolkit${reset}"
-        apt -y install cuda || return 1
+        apt -y install cuda-${1//./-} || return 1
         echo "  ${cyan}Ready to export the Cuda and Nsight path to PATH env"
         _dotfiles_dir=`dirname $0`/system/
         if [[ `grep "export PATH.*/usr/local/cuda/bin" ${_dotfiles_dir}exports | wc -l` -eq 0 ]]; then
@@ -233,7 +233,7 @@ function install_cuda {
 	unset _dotfiles_dir
 	true
 }
-dpkg_attempt_install cuda install_cuda
+dpkg_attempt_install cuda "install_cuda 10.1"
 
 ### install ROS Kinetic
 function install_ROS_Kinetic {
@@ -264,9 +264,9 @@ dpkg_attempt_install ros-kinetic install_ROS_Kinetic
 ### install CuDNN for Deep Learning Frameworks
 function install_CuDNN {
     ## to download the runtime, developer and samples debian packages from https://developer.nvidia.com/rdp/cudnn-download
-    _cudnn_deb=$(ls $_tmp_download_folder/libcudnn[0-9]_*.deb | tail -1)
-    _cudnn_dev_deb=$(ls $_tmp_download_folder/libcudnn[0-9]-dev_*.deb | tail -1)
-    _cudnn_doc_deb=$(ls $_tmp_download_folder/libcudnn[0-9]-doc_*.deb | tail -1)
+    _cudnn_deb=$(ls $_tmp_download_folder/libcudnn[0-9]_*+cuda$1_amd64.deb | tail -1)
+    _cudnn_dev_deb=$(ls $_tmp_download_folder/libcudnn[0-9]-dev_*+cuda$1_amd64.deb | tail -1)
+    _cudnn_doc_deb=$(ls $_tmp_download_folder/libcudnn[0-9]-doc_*+cuda$1_amd64.deb | tail -1)
     if [[ -f $_cudnn_deb ]] && [[ -f $_cudnn_dev_deb ]] && [[ -f $_cudnn_doc_deb ]]; then
         dpkg -i $_cudnn_deb
         dpkg -i $_cudnn_dev_deb
@@ -277,7 +277,7 @@ function install_CuDNN {
         return
     fi
 }
-dpkg_attempt_install cudnn install_CuDNN
+dpkg_attempt_install cudnn "install_CuDNN 10.1"
 
 ### install OpenCV 3.4.6 for both Python 2 and Python 3, also enabling CUDA, DNN and CPU Optimisation
 function install_OpenCV3_for_Py2_and_Py3 {
@@ -403,11 +403,11 @@ dpkg_attempt_install Anaconda2 install_Anaconda2 check_Anaconda2_installed
 ### install TensorRT for optimising TensorFlow and PyCUDA as CUDA Python wrapper
 function install_TensorRT {
     # to check the local repo pack
-    _tensorrt_deb=$(ls $_tmp_download_folder/nv-tensorrt-repo-*.deb | tail -1)
+    _tensorrt_deb=$(ls $_tmp_download_folder/nv-tensorrt-repo-*-cuda$1-*.deb | tail -1)
     if [[ -f $_tensorrt_deb ]]; then
         dpkg -i $_tensorrt_deb
         # to add the repo key
-        apt-key add $(ls /var/nv-tensorrt-repo-*/*.pub | tail -1)
+        apt-key add $(ls /var/nv-tensorrt-repo-cuda$1-*/*.pub | tail -1)
         apt update
         # to install tensorrt via its meta package
         apt -y install tensorrt
@@ -419,4 +419,27 @@ function install_TensorRT {
         return
     fi
 }
-dpkg_attempt_install tensorrt install_TensorRT
+dpkg_attempt_install tensorrt "install_TensorRT 10.1"
+
+### install CUDA 10.0, CuDNN 7.4.1 and TensorRT 5.0.2 for TensorFlow 2.0 Alpha
+function install_CUDA_suite_10.0 {
+    install_cuda 10.0
+    install_CuDNN 10.0
+    install_TensorRT 10.0
+}
+
+### install PyCUDA
+pip install 'pycuda>=2017.1.1'
+
+### install TensorFlow with GPU supporting
+pip install tensorflow-gpu==2.0.0-alpha0
+function tensorflow_set_ld_library_path {
+    _dotfiles_dir=`dirname $0`/system/
+    if [[ `grep "export LD_LIBRARY_PATH=.*/cuda/extras/CUPTI/lib64" ${_dotfiles_dir}exports | wc -l` -eq 0 ]]; then
+        echo "" >> ${_dotfiles_dir}exports
+        echo "###### export the CUDA's CUPTI lib path for TensorFlow with GPU" >> ${_dotfiles_dir}exports
+        echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64' >> ${_dotfiles_dir}exports
+        echo "" >> ${_dotfiles_dir}exports
+    fi
+}
+tensorflow_set_ld_library_path

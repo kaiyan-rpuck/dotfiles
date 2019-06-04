@@ -2,7 +2,8 @@
 
 ## TODO-List
 - backup the desktop shorcuts
-- install Caffe or TensorFlow
+- install Caffe
+- install Eigen3, Ceres, g2o and other scientific calculation packages
 
 ------
 ### Sogou Pinyin
@@ -172,3 +173,10 @@ List of application candidates：
 - It may be better to install it in a virtualenv when needed
 - Updating CUDA will break PyCUDA and will enforce to uninstall the old PyCUDA and then to install the new PyCUDA
 - This Python wrapper only work for Python2 (importing it fails in Python3)
+
+------
+### TensorFlow
+- Currently, TensorFlow debian installation only works with CUDA 10.0 suite (CUDA 10.0, CuDNN 7.4.1 and TensorRT 5.0.2)
+- The TensorFlow can be installed via `(g)pip install tensorflow-gpu==2.0.0-alpha0`
+- It may be better to install it in a virtualenv when needed
+- `export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/extras/CUPTI/lib64` may be needed
