@@ -52,20 +52,9 @@ function backup_original_dotfiles {
 execute_action "Backup original dotfiles" backup_original_dotfiles
 
 ################
-# install necessary softwares
-################
-execute_action "Software installations" "source $DOTFILES_ROOT/install_softwares.sh"
-# echo "${yellow}Starting to install softwares...${reset}"
-# ./$DOTFILES_ROOT/install_softwares.sh
-# echo "${green}Software installations finished.${reset}"
-
-################
 # setup system softlinks
 ################
 execute_action "Softlinking dotfiles" "source $DOTFILES_ROOT/symlink-setup.sh"
-# echo "${yellow}Starting soft linking...${reset}"
-# source `dirname $0`/symlink-setup.sh
-# echo "${green}soft linking finished.${reset}"
 
 ################
 # Update .bashrc to activate dotfiles
@@ -86,6 +75,11 @@ function update_bashrc {
     fi
 }
 execute_action "Adding dotfiles to .bashrc" update_bashrc
+
+################
+# install necessary softwares
+################
+execute_action "Software installations" "source $DOTFILES_ROOT/install_softwares.sh"
 
 ################
 # clean up
